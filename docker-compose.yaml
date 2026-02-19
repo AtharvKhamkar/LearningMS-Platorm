@@ -1,0 +1,75 @@
+services:
+  auth-service:
+    build:
+      context: .
+      dockerfile: ./apps/auth-service/dockerfile
+      target: development
+    command: npm run start:dev auth-service
+    env_file:
+      - ./apps/auth-service/.env
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '3000:3000'
+
+  course-service:
+    build:
+      context: .
+      dockerfile: ./apps/course-service/dockerfile
+      target: development
+    command: npm run start:dev course-service
+    env_file:
+      - ./apps/course-service/.env
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '3001:3001'
+
+  enrollment-service:
+    build:
+      context: .
+      dockerfile: ./apps/enrollment-service/dockerfile
+      target: development
+    command: npm run start:dev enrollment-service
+    env_file:
+      - ./apps/enrollment-service/.env
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '3002:3002'
+
+  user-management-service:
+    build:
+      context: .
+      dockerfile: ./apps/user-management-service/dockerfile
+      target: development
+    command: npm run start:dev user-management-service
+    env_file:
+      - ./apps/user-management-service/.env
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '3003:3003'
+
+  mail-worker:
+    build:
+      context: .
+      dockerfile: ./apps/mail-worker/dockerfile
+      target: development
+    command: npm run start:dev mail-worker
+    env_file:
+      - ./apps/mail-worker/.env
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '587:587'
+
+  rabbitmq:
+    image: rabbitmq
+    ports:
+      - '5672:5672'

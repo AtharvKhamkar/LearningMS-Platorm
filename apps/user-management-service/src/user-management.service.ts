@@ -1,7 +1,6 @@
 import { ApiResponse, AppJwtService, DatabaseService, FnGetUserProfileDetails, IPgQuery, IUserDb, ResponseUtil, StorageService } from '@app/common';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { FnUpdateUserCoverImage, FnUpdateUserFcmToken, FnUpdateUserProfileDetails, FnUpdateUserProfileImage } from './types';
-import { ProfileResponseMapper } from './mappers';
 import { UpdateFcmToken, UpdateProfileDto } from './dtos';
 import { ProfileResponseEntity } from './entities';
 
@@ -147,10 +146,9 @@ export class UserManagementService {
 
     const queryResult = await this.databaseService.queryOne<FnUpdateUserFcmToken>(pgQuery);
 
-    if (!queryResult?.success || !queryResult.data) {
+    if (!queryResult?.success) {
       throw new BadRequestException(queryResult?.message);
     }
-
 
     return ResponseUtil.success(
       'User Device Updated Successfully.',

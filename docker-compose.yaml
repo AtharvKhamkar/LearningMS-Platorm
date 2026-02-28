@@ -13,19 +13,19 @@ services:
     ports:
       - '3000:3000'
 
-  # course-service:
-  #   build:
-  #     context: .
-  #     dockerfile: ./apps/course-service/dockerfile
-  #     target: development
-  #   command: npm run start:dev course-service
-  #   env_file:
-  #     - ./apps/course-service/.env
-  #   volumes:
-  #     - .:/usr/src/app
-  #     - /usr/src/app/node_modules
-  #   ports:
-  #     - '3001:3001'
+  course-service:
+    build:
+      context: .
+      dockerfile: ./apps/course-service/dockerfile
+      target: development
+    command: npm run start:dev course-service
+    env_file:
+      - ./apps/course-service/.env
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '3001:3001'
 
   # enrollment-service:
   #   build:
@@ -41,19 +41,19 @@ services:
   #   ports:
   #     - '3002:3002'
 
-  user-management-service:
-    build:
-      context: .
-      dockerfile: ./apps/user-management-service/dockerfile
-      target: development
-    command: npm run start:dev user-management-service
-    env_file:
-      - ./apps/user-management-service/.env
-    volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
-    ports:
-      - '3003:3003'
+  # user-management-service:
+  #   build:
+  #     context: .
+  #     dockerfile: ./apps/user-management-service/dockerfile
+  #     target: development
+  #   command: npm run start:dev user-management-service
+  #   env_file:
+  #     - ./apps/user-management-service/.env
+  #   volumes:
+  #     - .:/usr/src/app
+  #     - /usr/src/app/node_modules
+  #   ports:
+  #     - '3003:3003'
 
   mail-worker:
     build:

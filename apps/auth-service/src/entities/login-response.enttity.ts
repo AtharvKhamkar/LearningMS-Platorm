@@ -10,14 +10,14 @@ export class LoginResponseEntity {
     @ApiProperty({ example: 'Khamkar' })
     lastName?: string | null;
 
-    @ApiProperty({ example: 'e819951e-eca1-49b5-9e2d-2e9b08208d6f' })
-    countryCodeId: string;
+    @ApiProperty({ example: 'India' })
+    countryName: string;
 
     @ApiProperty({ example: '+919876543210' })
     phoneNumber?: string | null;
 
-    @ApiProperty({ example: 'atharv@gmail.com' })
-    languageId: string;
+    @ApiProperty({ example: 'Marathi' })
+    languageName: string;
 
     @ApiProperty({ example: 'https://cdn.app.com/cover.png' })
     profileImage?: string | null;

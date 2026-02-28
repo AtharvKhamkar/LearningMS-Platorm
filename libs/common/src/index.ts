@@ -16,9 +16,13 @@ export * from './decorators/current-user.decorator';
 export * from './decorators/permission.decorator';
 export * from './guards/reset-password.guard';
 export * from './guards/permission.guard';
+export * from './guards/jwt-auth.guard';
 export * from './config/storage.config'
 export * from './infrastructure/storage/storage.module'
 export * from './infrastructure/storage/storage.service'
 export * from './validators/file-type.validator';
 export * from './validators/file-size.validator';
 export * from './pipes/image-upload.pipe';
+export * from './rbac/permissions';
+export * from './rbac/role-permissions';
+export * from './rbac/roles';

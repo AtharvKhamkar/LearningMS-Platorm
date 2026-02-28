@@ -13,7 +13,8 @@ export interface IUserDb {
     profile_image: string | null;
     cover_image: string | null;
     biography: string | null;
-    role: 'STUDENT' | 'INSTRUCTOR' | 'ADMIN';
+    role: string;
+    permissions: string[];
     is_verified: boolean;
     refresh_token: string | null;
     fcm_token: string | null;

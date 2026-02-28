@@ -2,6 +2,7 @@ export interface JwtPayload{
     sub: string,
     email:string,
     role: string,
+    permissions: string[],
     firstName:string,
     lastName:string | null,
     phoneNumber:string | null,

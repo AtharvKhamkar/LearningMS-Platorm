@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Patch, Put, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UserManagementService } from './user-management.service';
-import { JwtAuthGuard } from '@app/common/guards/jwt-auth.guards';
+import { JwtAuthGuard } from '@app/common/guards/jwt-auth.guard';
 import { ApiAcceptedResponse, ApiBearerAuth, ApiBody, ApiConsumes, ApiOkResponse, ApiResponse } from '@nestjs/swagger';
 import { CurrentUser, ImageUploadPipe } from '@app/common';
 import type { JwtPayload } from '@app/common';

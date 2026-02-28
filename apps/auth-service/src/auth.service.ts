@@ -1,8 +1,8 @@
-import { BadRequestException, ConflictException, ForbiddenException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { RegisterDto } from './dtos/register.dto';
-import { ApiResponse, AppJwtService, DatabaseService, IPgQuery, IUserDb, JwtPayload, ResponseUtil } from '@app/common';
+import { ApiResponse, AppJwtService, DatabaseService, FnGetUserProfileDetails, IPgQuery, IUserDb, JwtPayload, ResponseUtil } from '@app/common';
 import { RegistrationResponseEntity } from './entities';
-import { FnChangePasswordResult, FnGetActiveOtpResult, FnInsertUserOtpResult, FnRegisterUserResult, FnSetInactiveOtpResult, FnSetVerifiedUserResult, ISqlFnResult, OtpPurpose } from './types';
+import { FnChangePasswordResult, FnGetActiveOtpResult, FnInsertUserOtpResult, FnRegisterUserResult, FnSetInactiveOtpResult, FnSetVerifiedUserResult, OtpPurpose } from './types';
 import { PasswordUtil } from '@app/common/utils/password.util';
 import { ConfigService } from '@nestjs/config';
 import { LoginDto } from './dtos/login.dto';
@@ -49,7 +49,7 @@ export class AuthService {
         registerDto.profileImage,
         registerDto.coverImage,
         registerDto.biography,
-        registerDto.role,
+        registerDto.roleId,
         hashedOtp,
         otpExpiresIn
       ]
@@ -129,13 +129,23 @@ export class AuthService {
 
     //Get user info query
     const pgQuery: IPgQuery = {
-      query: `SELECT * FROM tbl_users WHERE email = $1 LIMIT 1`,
+      query: `SELECT * FROM fn_get_user_profile_details($1, $2, $3)`,
       params: [
+        null,
         loginDto.email,
+        true
       ]
     }
 
-    const loginData = await this.databaseService.queryOne<IUserDb>(pgQuery);
+    const queryResult = await this.databaseService.queryOne<FnGetUserProfileDetails<IUserDb>>(pgQuery);
+
+    if (!queryResult?.success || !queryResult?.data) {
+      console.log('Inside the the throw bad request block');
+      
+      throw new BadRequestException(queryResult?.message);
+    }
+
+    const loginData = queryResult.data;
 
     if (!loginData || loginData.is_deleted) {
       throw new UnauthorizedException(
@@ -153,13 +163,13 @@ export class AuthService {
 
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid Credentials');
-    }
+    }    
 
     //3. Generate access token and refresh token
-    const jwtPayload: JwtPayload = { sub: loginData.user_id.toString(), email: loginData.email, firstName: loginData.first_name, lastName: loginData.last_name, role: loginData.role, phoneNumber: loginData.phone_number }
+    const jwtPayload: JwtPayload = { sub: loginData.user_id.toString(), email: loginData.email, firstName: loginData.first_name, lastName: loginData.last_name, role: loginData.role, permissions: loginData.permissions, phoneNumber: loginData.phone_number }
 
     const { accessToken, refreshToken } = await this.jwtService.generateTokens(jwtPayload);
-
+    
     //set refresh token query
     const setRefreshtokenPgQuery: IPgQuery = {
       query: `UPDATE tbl_users SET refresh_token = $1 WHERE email = $2`,
@@ -186,6 +196,7 @@ export class AuthService {
           coverImage: loginData.cover_image,
           biography: loginData.biography,
           role: loginData.role,
+          permissions: loginData.permissions,
           isVerified: loginData.is_verified,
           accessToken: accessToken
         }

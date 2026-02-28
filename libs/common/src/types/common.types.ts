@@ -57,3 +57,5 @@ export const AllowedImageExtensions = [
     '.webp',
     '.jpg'
 ]
+
+export interface FnGetUserProfileDetails<IUserDb> extends ApiResponse<IUserDb>{}

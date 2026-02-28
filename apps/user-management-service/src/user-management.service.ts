@@ -1,6 +1,6 @@
-import { ApiResponse, AppJwtService, DatabaseService, IPgQuery, IUserDb, ResponseUtil, StorageService } from '@app/common';
+import { ApiResponse, AppJwtService, DatabaseService, FnGetUserProfileDetails, IPgQuery, IUserDb, ResponseUtil, StorageService } from '@app/common';
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { FnGetUserProfileDetails, FnUpdateUserCoverImage, FnUpdateUserFcmToken, FnUpdateUserProfileDetails, FnUpdateUserProfileImage } from './types';
+import {FnUpdateUserCoverImage, FnUpdateUserFcmToken, FnUpdateUserProfileDetails, FnUpdateUserProfileImage } from './types';
 import { ProfileResponseMapper } from './mappers';
 import { UpdateFcmToken, UpdateProfileDto } from './dtos';
 

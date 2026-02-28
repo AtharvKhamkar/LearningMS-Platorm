@@ -1,4 +1,4 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, ApiResponse } from "@nestjs/swagger";
 
 export class LoginResponseEntity {
     @ApiProperty({ example: 'atharv@gmail.com' })
@@ -30,6 +30,9 @@ export class LoginResponseEntity {
 
     @ApiProperty({ example: 'STUDENT' })
     role: string;
+
+    @ApiProperty({ example: ["user:view", "user:update:profile", "user:update:password"] })
+    permissions: string[];
 
     @ApiProperty({ example: true })
     isVerified: boolean;

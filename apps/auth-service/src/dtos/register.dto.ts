@@ -16,7 +16,7 @@ export class RegisterDto {
   @MaxLength(100)
   lastName?: string;
 
-  @ApiProperty({ example: "atharv@gmail.com" })
+  @ApiProperty({ example: "atharvkhamkar1901@gmail.com" })
   @IsEmail()
   @IsString()
   @MaxLength(150)
@@ -35,7 +35,7 @@ export class RegisterDto {
   @IsMobilePhone()
   phoneNumber?: string;
 
-  @ApiProperty({ example: "Strong@123" })
+  @ApiProperty({ example: "Test@123" })
   @IsNotEmpty()
   @IsString()
   @MinLength(8)
@@ -56,8 +56,8 @@ export class RegisterDto {
   @IsString()
   biography?: string;
 
-  @ApiProperty({ example: "STUDENT" })
-  @IsString()
-  role: string
+  @ApiProperty({ example: "1d5ef201-0972-4daa-b724-4325dcf28031" })
+  @IsUUID()
+  roleId: string
 }
 

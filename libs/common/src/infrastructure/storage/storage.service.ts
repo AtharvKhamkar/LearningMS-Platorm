@@ -27,7 +27,7 @@ export class StorageService {
     */
     async uploadFile(file: Express.Multer.File): Promise<string> {
 
-        const {name} = parse(file.originalname);
+        const { name } = parse(file.originalname);
 
         const key = `${name}_${uuid()}`;
 
@@ -46,7 +46,13 @@ export class StorageService {
     /*
     Function used to get public singed url
     */
-    async getSignedFileUrl(key: string): Promise<string> {
+    async getSignedFileUrl(key?: string | null): Promise<string | null> {
+
+        //If key is empty string
+        if (!key || key.trim() === '') {
+            return null;
+        }
+
         const command = new GetObjectCommand({
             Bucket: this.bucket,
             Key: key

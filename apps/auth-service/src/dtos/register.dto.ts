@@ -41,16 +41,6 @@ export class RegisterDto {
   @MinLength(8)
   password: string;
 
-  @ApiPropertyOptional({ example: "https://cdn.app.com/profile.png" })
-  @IsOptional()
-  @IsString()
-  profileImage?: string;
-
-  @ApiPropertyOptional({ example: "https://cdn.app.com/cover.png" })
-  @IsOptional()
-  @IsString()
-  coverImage?: string;
-
   @ApiPropertyOptional({ example: "Software Engineer" })
   @IsOptional()
   @IsString()

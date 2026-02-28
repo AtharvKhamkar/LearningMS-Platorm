@@ -1,6 +1,6 @@
 import { BadRequestException, ForbiddenException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { RegisterDto } from './dtos/register.dto';
-import { ApiResponse, AppJwtService, DatabaseService, FnGetUserProfileDetails, IPgQuery, IUserDb, JwtPayload, ResponseUtil } from '@app/common';
+import { ApiResponse, AppJwtService, DatabaseService, FnGetUserProfileDetails, IPgQuery, IUserDb, JwtPayload, ResponseUtil, StorageService } from '@app/common';
 import { RegistrationResponseEntity } from './entities';
 import { FnChangePasswordResult, FnGetActiveOtpResult, FnInsertUserOtpResult, FnRegisterUserResult, FnSetInactiveOtpResult, FnSetVerifiedUserResult, OtpPurpose } from './types';
 import { PasswordUtil } from '@app/common/utils/password.util';
@@ -19,7 +19,8 @@ export class AuthService {
     private readonly databaseService: DatabaseService,
     private readonly configService: ConfigService,
     private readonly jwtService: AppJwtService,
-    private readonly mailClientService: MailClientService
+    private readonly mailClientService: MailClientService,
+    private readonly storageService: StorageService
   ) { }
 
   async register(registerDto: RegisterDto): Promise<ApiResponse> {
@@ -37,7 +38,7 @@ export class AuthService {
     const hashedOtp = await OtpUtil.hash(otp, otpPepper);
 
     const pgQuery: IPgQuery = {
-      query: `SELECT * FROM fn_register_user($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
+      query: `SELECT * FROM fn_register_user($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
       params: [
         registerDto.firstName,
         registerDto.lastName,
@@ -46,8 +47,6 @@ export class AuthService {
         registerDto.languageId,
         registerDto.phoneNumber,
         hashedPassword,
-        registerDto.profileImage,
-        registerDto.coverImage,
         registerDto.biography,
         registerDto.roleId,
         hashedOtp,
@@ -141,7 +140,7 @@ export class AuthService {
 
     if (!queryResult?.success || !queryResult?.data) {
       console.log('Inside the the throw bad request block');
-      
+
       throw new BadRequestException(queryResult?.message);
     }
 
@@ -163,13 +162,13 @@ export class AuthService {
 
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid Credentials');
-    }    
+    }
 
     //3. Generate access token and refresh token
     const jwtPayload: JwtPayload = { sub: loginData.user_id.toString(), email: loginData.email, firstName: loginData.first_name, lastName: loginData.last_name, role: loginData.role, permissions: loginData.permissions, phoneNumber: loginData.phone_number }
 
     const { accessToken, refreshToken } = await this.jwtService.generateTokens(jwtPayload);
-    
+
     //set refresh token query
     const setRefreshtokenPgQuery: IPgQuery = {
       query: `UPDATE tbl_users SET refresh_token = $1 WHERE email = $2`,
@@ -181,6 +180,11 @@ export class AuthService {
 
     const updateRefreshToken = await this.databaseService.query(setRefreshtokenPgQuery);
 
+    //fetch signed profile , cover image urls.
+    const [profileImageUrl, coverImageUrl] = await Promise.all([
+      await this.storageService.getSignedFileUrl(loginData?.profile_image),
+      await this.storageService.getSignedFileUrl(loginData?.cover_image)
+    ])    
 
     return ResponseUtil.success(
       'User logged in successfully.',
@@ -192,8 +196,8 @@ export class AuthService {
           countryCodeId: loginData.country_code_id,
           phoneNumber: loginData.phone_number,
           languageId: loginData.language_id,
-          profileImage: loginData.profile_image,
-          coverImage: loginData.cover_image,
+          profileImage: profileImageUrl,
+          coverImage: coverImageUrl,
           biography: loginData.biography,
           role: loginData.role,
           permissions: loginData.permissions,

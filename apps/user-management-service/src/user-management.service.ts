@@ -1,8 +1,9 @@
 import { ApiResponse, AppJwtService, DatabaseService, FnGetUserProfileDetails, IPgQuery, IUserDb, ResponseUtil, StorageService } from '@app/common';
 import { BadRequestException, Injectable } from '@nestjs/common';
-import {FnUpdateUserCoverImage, FnUpdateUserFcmToken, FnUpdateUserProfileDetails, FnUpdateUserProfileImage } from './types';
+import { FnUpdateUserCoverImage, FnUpdateUserFcmToken, FnUpdateUserProfileDetails, FnUpdateUserProfileImage } from './types';
 import { ProfileResponseMapper } from './mappers';
 import { UpdateFcmToken, UpdateProfileDto } from './dtos';
+import { ProfileResponseEntity } from './entities';
 
 @Injectable()
 export class UserManagementService {
@@ -29,9 +30,31 @@ export class UserManagementService {
 
     const user: IUserDb = queryResult?.data;
 
+    //fetch signed profile , cover image urls.
+    const [profileImageUrl, coverImageUrl] = await Promise.all([
+      await this.storageService.getSignedFileUrl(user.profile_image),
+      await this.storageService.getSignedFileUrl(user.cover_image)
+    ]);
+
     return ResponseUtil.success(
       'User profile fetched successfully.',
-      ProfileResponseMapper.toEntity(user)
+      new ProfileResponseEntity({
+        id: user.user_id,
+        firstName: user.first_name,
+        lastName: user.last_name,
+        email: user.email,
+        countryName: user.country_name,
+        languageName: user.language_name,
+        phoneNumber: user.phone_number,
+        profileImage: profileImageUrl,
+        coverImage: coverImageUrl,
+        bioGraphy: user.biography,
+        role: user.role,
+        isVerified: user.is_verified,
+        fcmToken: user.fcm_token,
+        createdAt: user.created_at,
+        updatedAt: user.updated_at
+      })
     )
   }
 

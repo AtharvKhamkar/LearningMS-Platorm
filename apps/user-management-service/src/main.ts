@@ -1,7 +1,7 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { UserManagementServiceModule } from './user-management.module';
 import { ValidationPipe } from '@nestjs/common';
-import { setupSwagger } from '@app/common';
+import { PermissionsGuard, setupSwagger } from '@app/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(UserManagementServiceModule);

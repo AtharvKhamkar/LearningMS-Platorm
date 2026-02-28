@@ -3,7 +3,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { ConfigModule } from '@nestjs/config';
 import { HealthController } from './health.controller';
-import { AppJwtModule, DatabaseModule, rabbitmqConfig, storageConfig } from '@app/common';
+import { AppJwtModule, DatabaseModule, rabbitmqConfig, storageConfig, StorageModule } from '@app/common';
 import { RabbitMQModule } from '@app/common/infrastructure/queues/rabbitmq.module';
 import { MailClientService } from './mail-client.service';
 
@@ -16,6 +16,7 @@ import { MailClientService } from './mail-client.service';
     AppJwtModule,
     DatabaseModule,
     RabbitMQModule,
+    StorageModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [rabbitmqConfig, storageConfig]

@@ -8,7 +8,7 @@ export class ProfileResponseEntity {
     firstName: string;
 
     @ApiProperty({required: false})
-    lastName?: string;
+    lastName?: string | null;
 
     @ApiProperty()
     email: string;
@@ -20,16 +20,16 @@ export class ProfileResponseEntity {
     languageName: string;
 
     @ApiProperty({required: false})
-    phoneNumber?: string;
+    phoneNumber?: string | null;
 
     @ApiProperty({required: false})
-    profileImage?: string;
+    profileImage?: string | null;
 
     @ApiProperty({required: false})
-    coverImage?: string;
+    coverImage?: string | null;
 
     @ApiProperty({required: false})
-    bioGraphy?: string;
+    bioGraphy?: string | null;
 
     @ApiProperty()
     role: string;
@@ -38,7 +38,7 @@ export class ProfileResponseEntity {
     isVerified: boolean;
 
     @ApiProperty({required: false})
-    fcmToken?: string;
+    fcmToken?: string | null;
 
     @ApiProperty()
     createdAt: string;

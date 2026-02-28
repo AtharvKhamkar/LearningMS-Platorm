@@ -12,8 +12,10 @@ export * from './jwt/jwt.types'
 export * from './jwt/jwt.module'
 export * from './constants/constants'
 export * from './decorators/reset-password-user-decorator';
-export * from './guards/reset-password.guard';
 export * from './decorators/current-user.decorator';
+export * from './decorators/permission.decorator';
+export * from './guards/reset-password.guard';
+export * from './guards/permission.guard';
 export * from './config/storage.config'
 export * from './infrastructure/storage/storage.module'
 export * from './infrastructure/storage/storage.service'

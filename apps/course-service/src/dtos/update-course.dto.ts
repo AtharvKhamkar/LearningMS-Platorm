@@ -14,7 +14,7 @@ import {
 import { Transform } from 'class-transformer';
 import { CourseLevel } from '../types';
 
-export class CreateCourseFormFieldsDto {
+export class UpdateCourseDto {
 
     @ApiProperty({
         example: 'c13ae1ed-02e8-44dc-8d11-48ebaf5f04f1',
@@ -107,13 +107,4 @@ export class CreateCourseFormFieldsDto {
 }
 
 
-export class CreateCourseDto extends CreateCourseFormFieldsDto {
-    @ApiProperty({
-        example: 'courses/thumbnails/abc123.jpg',
-        description: 'S3 object key of the course thumbnail',
-        type: 'string',
-        format: 'binary',
-    })
-    thumbnail: any;
-}
 

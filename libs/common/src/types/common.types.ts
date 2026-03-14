@@ -39,6 +39,14 @@ export interface IEmailVerifyEmailEventPayload {
     expiresAt: string
 }
 
+export interface ICourseCreateEmailEventPayload {
+    email: string,
+    name: string,
+    title: string,
+    price: string
+    duration: string
+}
+
 export interface FileTypeValidatorOptions {
   allowedMimeTypes: string[];
   allowedExtensions?: string[];

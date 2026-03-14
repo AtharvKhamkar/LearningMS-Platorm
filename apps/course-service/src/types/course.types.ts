@@ -21,3 +21,30 @@ export type FnCreateCourseResult = ISqlFnResult<{
     courseId: string;
     status: CourseStatus;
 }>;
+
+export type FnUpdateCourseResult = ISqlFnResult<{
+    courseId: string;
+    status: CourseStatus;
+}>;
+
+export type FnUpdateCourseThumbnailResult = ISqlFnResult<{
+    courseId: string;
+    status: CourseStatus;
+    oldThumbnailKey: string
+    updatedThumbnailKey: string
+}>;
+
+export type FnPublishCourseResult = ISqlFnResult<{
+    courseId: string;
+    status: CourseStatus;
+}>;
+
+export type FnUnpublishCourseResult = ISqlFnResult<{
+    courseId: string;
+    status: CourseStatus;
+}>;
+
+export type FnCreateDraftCourseResult = ISqlFnResult<{
+    courseId: string;
+    status: CourseStatus;
+}>;

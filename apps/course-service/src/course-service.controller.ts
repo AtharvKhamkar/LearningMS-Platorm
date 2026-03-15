@@ -5,7 +5,7 @@ import { CreateCourseDto, UpdateCourseThumbnail } from './dtos';
 import { CheckPermissions, CurrentUser, ImageUploadPipe, JwtAuthGuard, Permissions, PermissionsGuard } from '@app/common';
 import type { JwtPayload } from '@app/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { CreateCourseResponseEntity, CreateDraftResponseEntity, PublishCourseResponseEntity, UnpublishCourseResponseEntity } from './entities';
+import { CreateCourseResponseEntity, CreateDraftResponseEntity, GetCourseDetailsResponseEntity, PublishCourseResponseEntity, UnpublishCourseResponseEntity } from './entities';
 import { UpdateCourseDto } from './dtos/update-course.dto';
 import { UpdateCourseResponseEntity } from './entities/update-course-reponse.entity';
 
@@ -89,5 +89,14 @@ export class CourseServiceController {
   ) {
     const userId = user.sub;
     return this.courseServiceService.creteDraft(courseId, userId);
+  }
+
+  @CheckPermissions(Permissions.COURSE_VIEW_ALL)
+  @Get(':id')
+  @ApiOkResponse({ type: GetCourseDetailsResponseEntity })
+  async getCourseDetails(
+    @Param('id') courseId: string,
+  ) {
+    return this.courseServiceService.getCourseDetails(courseId);
   }
 }

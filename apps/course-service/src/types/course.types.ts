@@ -48,3 +48,40 @@ export type FnCreateDraftCourseResult = ISqlFnResult<{
     courseId: string;
     status: CourseStatus;
 }>;
+
+export type FnGetCourseDetailsResult = ISqlFnResult<CourseDetails>;
+
+export interface CourseDetails {
+    courseId: string;
+    category: {
+        id: string;
+        name: string;
+    };
+    subcategory: {
+        id: string;
+        name: string;
+    };
+    instructor: {
+        id: string;
+        name: string;
+        email: string;
+        profileImage?: string;
+    };
+    title: string;
+    description: string;
+    requirement?: string;
+    courseLearning?: string;
+    tags: string[];
+    level: string;
+    language: {
+        id: string;
+        name: string;
+    }
+    duration?: string;
+    price: number;
+    status: CourseStatus;
+    thumbnail: string;
+    createdAt: string;
+    updatedAt: string;
+    publishedAt: string;
+}

@@ -1,8 +1,8 @@
 import { ApiResponse, DatabaseService, IPgQuery, ResponseUtil, StorageService } from '@app/common';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateCourseDto, UpdateCourseDto } from './dtos';
-import { FnCreateCourseResult, FnCreateDraftCourseResult, FnPublishCourseResult, FnUnpublishCourseResult, FnUpdateCourseResult, FnUpdateCourseThumbnailResult } from './types';
-import { CreateCourseResponseEntity, CreateDraftResponseEntity, PublishCourseResponseEntity, UnpublishCourseResponseEntity, UpdateCourseResponseEntity, UpdateCourseThumbnailResponseEntity } from './entities';
+import { FnCreateCourseResult, FnCreateDraftCourseResult, FnGetCourseDetailsResult, FnPublishCourseResult, FnUnpublishCourseResult, FnUpdateCourseResult, FnUpdateCourseThumbnailResult } from './types';
+import { CourseCategoryEntity, CourseInstructorEntity, CourseLanguageEntity, CourseSubCategoryEntity, CreateCourseResponseEntity, CreateDraftResponseEntity, GetCourseDetailsResponseEntity, PublishCourseResponseEntity, UnpublishCourseResponseEntity, UpdateCourseResponseEntity, UpdateCourseThumbnailResponseEntity } from './entities';
 
 @Injectable()
 export class CourseServiceService {
@@ -62,7 +62,7 @@ export class CourseServiceService {
   //Check current user is owner of that course
   //Check if the user has archived the course if it is archived then user
   //user should restricted from the updating
-  async update(userId: string,courseId: string, dto: UpdateCourseDto): Promise<ApiResponse> {
+  async update(userId: string, courseId: string, dto: UpdateCourseDto): Promise<ApiResponse> {
 
     const pgQuery: IPgQuery = {
       query: `SELECT * FROM fn_update_course($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
@@ -79,7 +79,7 @@ export class CourseServiceService {
         dto.level,
         dto.languageId,
         dto.duration,
-        dto.price,        
+        dto.price,
       ]
     };
 
@@ -123,7 +123,7 @@ export class CourseServiceService {
 
     const oldThumbnailKey = queryResult?.data?.oldThumbnailKey
 
-    if(oldThumbnailKey){
+    if (oldThumbnailKey) {
       await this.storageService.deleteFile(oldThumbnailKey);
     }
 
@@ -220,6 +220,57 @@ export class CourseServiceService {
         courseId: queryResult.data?.courseId,
         status: queryResult.data?.status
       })
+    )
+  }
+
+  async getCourseDetails(courseId: string): Promise<ApiResponse> {
+
+    const pgQuery: IPgQuery = {
+      query: `SELECT * FROM fn_get_course_details($1)`,
+      params: [
+        courseId
+      ]
+    };
+
+    const queryResult = await this.databaseService.queryOne<FnGetCourseDetailsResult>(pgQuery);
+
+    if (!queryResult?.success || !queryResult?.data) {
+      throw new BadRequestException(
+        queryResult?.message
+      )
+    }
+
+    const courseData = queryResult.data;
+
+    let thumbnailUrl = '';
+    if (courseData?.thumbnail) {
+      thumbnailUrl = await this.storageService.getSignedFileUrl(courseData.thumbnail) ?? '';
+    }
+
+    const courseDetails: GetCourseDetailsResponseEntity = new GetCourseDetailsResponseEntity({
+      courseId: courseData?.courseId,
+      category: new CourseCategoryEntity(courseData.category),
+      subcategory: new CourseSubCategoryEntity(courseData.subcategory),
+      instructor: new CourseInstructorEntity(courseData.instructor),
+      title: courseData.title,
+      description: courseData.description,
+      requirement: courseData.requirement,
+      courseLearning: courseData.courseLearning,
+      tags: courseData.tags,
+      level: courseData.level,
+      language: new CourseLanguageEntity(courseData.language),
+      duration: courseData.duration,
+      price: courseData.price,
+      status: courseData.status,
+      thumbnail: thumbnailUrl,
+      createdAt: courseData.createdAt,
+      updatedAt: courseData.updatedAt,
+      publishedAt: courseData.publishedAt
+    })
+
+    return ResponseUtil.success(
+      queryResult.message,
+      courseDetails
     )
   }
 }

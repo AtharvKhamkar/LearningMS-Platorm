@@ -1,11 +1,11 @@
-import { Body, Controller, Get, Param, Patch, Post, Put, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Put, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { CourseServiceService } from './course-service.service';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOkResponse } from '@nestjs/swagger';
-import { CreateCourseDto, UpdateCourseThumbnail } from './dtos';
+import { CreateCourseDto, SearchCoursesDto, UpdateCourseThumbnail } from './dtos';
 import { CheckPermissions, CurrentUser, ImageUploadPipe, JwtAuthGuard, Permissions, PermissionsGuard } from '@app/common';
 import type { JwtPayload } from '@app/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { CreateCourseResponseEntity, CreateDraftResponseEntity, GetCourseDetailsResponseEntity, PublishCourseResponseEntity, UnpublishCourseResponseEntity } from './entities';
+import { CourseSearchResponseEntity, CreateCourseResponseEntity, CreateDraftResponseEntity, GetCourseDetailsResponseEntity, PublishCourseResponseEntity, UnpublishCourseResponseEntity } from './entities';
 import { UpdateCourseDto } from './dtos/update-course.dto';
 import { UpdateCourseResponseEntity } from './entities/update-course-reponse.entity';
 
@@ -14,6 +14,17 @@ import { UpdateCourseResponseEntity } from './entities/update-course-reponse.ent
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 export class CourseServiceController {
   constructor(private readonly courseServiceService: CourseServiceService) { }
+
+  @CheckPermissions(Permissions.COURSE_VIEW_ALL)
+  @Get('search')
+  @ApiOkResponse({ type: CourseSearchResponseEntity })
+  async searchCourse(
+    @Query() dto: SearchCoursesDto,
+  ) {
+    console.log('search API called');
+    
+    return this.courseServiceService.searchCourse(dto);
+  }
 
   @CheckPermissions(Permissions.COURSE_CREATE)
   @Post()
@@ -97,6 +108,8 @@ export class CourseServiceController {
   async getCourseDetails(
     @Param('id') courseId: string,
   ) {
+    console.log('Details API called');
+    
     return this.courseServiceService.getCourseDetails(courseId);
   }
 }

@@ -1,8 +1,8 @@
 import { ApiResponse, DatabaseService, IPgQuery, ResponseUtil, StorageService } from '@app/common';
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CreateCourseDto, UpdateCourseDto } from './dtos';
-import { FnCreateCourseResult, FnCreateDraftCourseResult, FnGetCourseDetailsResult, FnPublishCourseResult, FnUnpublishCourseResult, FnUpdateCourseResult, FnUpdateCourseThumbnailResult } from './types';
-import { CourseCategoryEntity, CourseInstructorEntity, CourseLanguageEntity, CourseSubCategoryEntity, CreateCourseResponseEntity, CreateDraftResponseEntity, GetCourseDetailsResponseEntity, PublishCourseResponseEntity, UnpublishCourseResponseEntity, UpdateCourseResponseEntity, UpdateCourseThumbnailResponseEntity } from './entities';
+import { CreateCourseDto, SearchCoursesDto, UpdateCourseDto } from './dtos';
+import { CourseDetails, FnCreateCourseResult, FnCreateDraftCourseResult, FnGetCourseDetailsResult, FnPublishCourseResult, FnSearchCourseResult, FnUnpublishCourseResult, FnUpdateCourseResult, FnUpdateCourseThumbnailResult } from './types';
+import { CourseCategoryEntity, CourseInstructorEntity, CourseLanguageEntity, CourseSearchResponseEntity, CourseSubCategoryEntity, CreateCourseResponseEntity, CreateDraftResponseEntity, GetCourseDetailsResponseEntity, PublishCourseResponseEntity, UnpublishCourseResponseEntity, UpdateCourseResponseEntity, UpdateCourseThumbnailResponseEntity } from './entities';
 
 @Injectable()
 export class CourseServiceService {
@@ -271,6 +271,68 @@ export class CourseServiceService {
     return ResponseUtil.success(
       queryResult.message,
       courseDetails
+    )
+  }
+
+  async searchCourse(dto: SearchCoursesDto): Promise<ApiResponse> {
+
+    const pgQuery: IPgQuery = {
+      query: `SELECT * FROM fn_search_courses($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
+      params: [
+        dto.search,
+        dto.categoryId,
+        dto.subcategoryId,
+        dto.tags,
+        dto.levels,
+        dto.languageId,
+        dto.minPrice,
+        dto.maxPrice,
+        dto.minDuration,
+        dto.maxDuration,
+        dto.sortBy,
+        dto.sortOrder,
+        dto.page,
+        dto.limit
+      ]
+    };
+
+    const queryResult = await this.databaseService.queryOne<FnSearchCourseResult>(pgQuery);
+
+    if (!queryResult?.success) {
+      throw new BadRequestException(
+        queryResult?.message || "Failed to search courses"
+      );
+    }
+
+    const resultData = queryResult?.data;
+    const courseData = resultData?.courses || [];
+    const paginationData = resultData?.pagination;
+
+    // process thumbnail url
+    const processedResult = await Promise.all(
+      courseData.map(async (course: CourseDetails) => {
+
+        // thumbnail
+        if (course.thumbnail) {
+          course.thumbnail = await this.storageService.getSignedFileUrl(course.thumbnail) ?? '';
+        }
+
+        //Profile image url
+        if (course.instructor.profileImage) {
+          course.instructor.profileImage = await this.storageService.getSignedFileUrl(course.instructor.profileImage) ?? '';
+        }
+
+        return course;
+      })
+    );
+
+    return ResponseUtil.success(
+      queryResult.message,
+      new CourseSearchResponseEntity({
+        courses: processedResult,
+        pagination: paginationData
+      })
+
     )
   }
 }

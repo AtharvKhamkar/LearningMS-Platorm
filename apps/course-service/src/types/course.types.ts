@@ -85,3 +85,22 @@ export interface CourseDetails {
     updatedAt: string;
     publishedAt: string;
 }
+
+export type FnSearchCourseResult = ISqlFnResult<CourseSearchData>;
+
+export interface CourseSearchData {
+    courses:    CourseDetails[];
+    pagination: SearchPagination;
+}
+
+export interface SearchPagination {
+    total: number;
+    page:  number;
+    limit: number;
+}
+
+
+
+
+
+

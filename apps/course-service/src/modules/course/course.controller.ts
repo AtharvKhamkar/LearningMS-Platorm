@@ -1,19 +1,19 @@
 import { Body, Controller, Get, Param, Patch, Post, Put, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
-import { CourseServiceService } from './course-service.service';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOkResponse } from '@nestjs/swagger';
 import { CreateCourseDto, SearchCoursesDto, UpdateCourseThumbnail } from './dtos';
 import { CheckPermissions, CurrentUser, ImageUploadPipe, JwtAuthGuard, Permissions, PermissionsGuard } from '@app/common';
 import type { JwtPayload } from '@app/common';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { CourseSearchResponseEntity, CreateCourseResponseEntity, CreateDraftResponseEntity, GetCourseDetailsResponseEntity, PublishCourseResponseEntity, UnpublishCourseResponseEntity } from './entities';
 import { UpdateCourseDto } from './dtos/update-course.dto';
 import { UpdateCourseResponseEntity } from './entities/update-course-reponse.entity';
+import { FileInterceptor } from '@nestjs/platform-express/multer';
+import { CourseService } from './course.service';
 
 @Controller('/course')
 @ApiBearerAuth('access-token')
 @UseGuards(JwtAuthGuard, PermissionsGuard)
-export class CourseServiceController {
-  constructor(private readonly courseServiceService: CourseServiceService) { }
+export class CourseController {
+  constructor(private readonly courseService: CourseService) { }
 
   @CheckPermissions(Permissions.COURSE_VIEW_ALL)
   @Get('search')
@@ -23,7 +23,7 @@ export class CourseServiceController {
   ) {
     console.log('search API called');
     
-    return this.courseServiceService.searchCourse(dto);
+    return this.courseService.searchCourse(dto);
   }
 
   @CheckPermissions(Permissions.COURSE_CREATE)
@@ -38,7 +38,7 @@ export class CourseServiceController {
     @UploadedFile(ImageUploadPipe) thumbnail: Express.Multer.File,
   ) {
     const userId = user.sub;
-    return this.courseServiceService.create(userId, thumbnail, dto);
+    return this.courseService.create(userId, thumbnail, dto);
   }
 
   @CheckPermissions(Permissions.COURSE_UPDATE)
@@ -51,7 +51,7 @@ export class CourseServiceController {
     @Body() dto: UpdateCourseDto,
   ) {
     const userId = user.sub;
-    return this.courseServiceService.update(userId, courseId, dto);
+    return this.courseService.update(userId, courseId, dto);
   }
 
   @CheckPermissions(Permissions.COURSE_UPDATE)
@@ -66,7 +66,7 @@ export class CourseServiceController {
     @UploadedFile(ImageUploadPipe) thumbnail: Express.Multer.File,
   ) {
     const userId = user.sub;
-    return this.courseServiceService.updateThumbnail(courseId, userId, thumbnail);
+    return this.courseService.updateThumbnail(courseId, userId, thumbnail);
   }
 
   @CheckPermissions(Permissions.COURSE_PUBLISH)
@@ -77,7 +77,7 @@ export class CourseServiceController {
     @Param('id') courseId: string,
   ) {
     const userId = user.sub;
-    return this.courseServiceService.publish(courseId, userId);
+    return this.courseService.publish(courseId, userId);
   }
 
   @CheckPermissions(Permissions.COURSE_UNPUBLISH)
@@ -88,7 +88,7 @@ export class CourseServiceController {
     @Param('id') courseId: string,
   ) {
     const userId = user.sub;
-    return this.courseServiceService.unpublish(courseId, userId);
+    return this.courseService.unpublish(courseId, userId);
   }
 
   @CheckPermissions(Permissions.COURSE_UPDATE)
@@ -99,7 +99,7 @@ export class CourseServiceController {
     @Param('id') courseId: string,
   ) {
     const userId = user.sub;
-    return this.courseServiceService.creteDraft(courseId, userId);
+    return this.courseService.creteDraft(courseId, userId);
   }
 
   @CheckPermissions(Permissions.COURSE_VIEW_ALL)
@@ -110,6 +110,6 @@ export class CourseServiceController {
   ) {
     console.log('Details API called');
     
-    return this.courseServiceService.getCourseDetails(courseId);
+    return this.courseService.getCourseDetails(courseId);
   }
 }

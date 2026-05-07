@@ -1,25 +1,16 @@
 import { Module } from '@nestjs/common';
-import { CourseServiceController } from './course-service.controller';
-import { CourseServiceService } from './course-service.service';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config'
 import { AppJwtModule, DatabaseModule, rabbitmqConfig, storageConfig, StorageModule } from '@app/common';
-import { HealthController } from './health.controller';
+import { HealthController } from 'apps/auth-service/src/health.controller';
+import { CourseModule } from './modules/course/course.module';
+import { CategoryModule } from './modules/category/category.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: '.env',
-    }),
-    AppJwtModule,
-    DatabaseModule,
-    StorageModule,
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [rabbitmqConfig, storageConfig]
-    }),
+    CourseModule,
+    CategoryModule
   ],
-  controllers: [HealthController, CourseServiceController],
-  providers: [CourseServiceService],
+  controllers: [HealthController],
+  providers: [],
 })
 export class CourseServiceModule { }

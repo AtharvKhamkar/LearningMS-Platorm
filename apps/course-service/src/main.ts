@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
-import { CourseServiceModule } from './course-service.module';
 import { ValidationPipe } from '@nestjs/common';
 import { setupSwagger } from '@app/common';
+import { CourseServiceModule } from './course-service.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(CourseServiceModule);

@@ -54,6 +54,7 @@ export const RolePermissions: Record<Roles, readonly string[]> = {
     Permissions.USER_UPDATE_PASSWORD,
 
     // Courses
+    Permissions.CATEGORY_VIEW,
     Permissions.COURSE_VIEW_ALL,
 
     // Enrollment

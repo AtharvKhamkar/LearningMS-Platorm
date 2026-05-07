@@ -5,7 +5,7 @@ import { CourseDetails, FnCreateCourseResult, FnCreateDraftCourseResult, FnGetCo
 import { CourseCategoryEntity, CourseInstructorEntity, CourseLanguageEntity, CourseSearchResponseEntity, CourseSubCategoryEntity, CreateCourseResponseEntity, CreateDraftResponseEntity, GetCourseDetailsResponseEntity, PublishCourseResponseEntity, UnpublishCourseResponseEntity, UpdateCourseResponseEntity, UpdateCourseThumbnailResponseEntity } from './entities';
 
 @Injectable()
-export class CourseServiceService {
+export class CourseService {
 
   constructor(
     private readonly databaseService: DatabaseService,

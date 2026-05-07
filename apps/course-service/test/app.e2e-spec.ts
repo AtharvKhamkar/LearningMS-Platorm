@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { CourseServiceModule } from './../src/course-service.module';
+import { CourseServiceModule } from '../src/modules/course/course.module';
 
 describe('CourseServiceController (e2e)', () => {
   let app: INestApplication;

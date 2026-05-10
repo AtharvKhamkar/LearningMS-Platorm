@@ -1,7 +1,11 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOkResponse } from '@nestjs/swagger';
-import { CheckPermissions, JwtAuthGuard, Permissions, PermissionsGuard } from '@app/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiOkResponse } from '@nestjs/swagger';
+import { CheckPermissions, CurrentUser, JwtAuthGuard, Permissions, PermissionsGuard } from '@app/common';
+import type { JwtPayload } from '@app/common';
 import { CategoryService } from './category.service';
+import { GetCategoryResponseEntity } from './entities/get-categories-response.entity';
+import { CreateCategoryDto } from './dtos/create-category.dto';
+import { CreateCategoryResponseEntity } from './entities/create-category-response.entity';
 
 @Controller('/category')
 @ApiBearerAuth('access-token')
@@ -10,11 +14,23 @@ export class CategoryController {
   constructor(private readonly categoryService: CategoryService) { }
 
   @CheckPermissions(Permissions.CATEGORY_VIEW)
-    @Get()
-    @ApiOkResponse({})
-    async getCategories(
-    ) {
-      return this.categoryService.getCategories();
-    }
+  @Get()
+  @ApiOkResponse({ type: GetCategoryResponseEntity })
+  async getCategories(
+  ) {
+    return this.categoryService.getCategories();
+  }
 
+  @CheckPermissions(Permissions.CATEGORY_CREATE)
+  @Post()
+  @ApiBody({ type: CreateCategoryDto })
+  @ApiOkResponse({ type: CreateCategoryResponseEntity })
+  async createCategory(
+    @CurrentUser() user: JwtPayload,
+    @Body() dto: CreateCategoryDto,
+
+  ) {
+    const userId = user.sub;
+    return this.categoryService.createCategory(userId, dto);
+  }
 }

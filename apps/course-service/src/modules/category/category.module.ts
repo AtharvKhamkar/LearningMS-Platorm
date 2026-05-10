@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppJwtModule, DatabaseModule, rabbitmqConfig, storageConfig, StorageModule } from '@app/common';
+import { CategoryController } from './category.controller';
+import { CategoryService } from './category.service';
 
 @Module({
   imports: [
@@ -16,7 +18,7 @@ import { AppJwtModule, DatabaseModule, rabbitmqConfig, storageConfig, StorageMod
       load: [rabbitmqConfig, storageConfig]
     }),
   ],
-  controllers: [],
-  providers: [],
+  controllers: [CategoryController],
+  providers: [CategoryService],
 })
 export class CategoryModule { }

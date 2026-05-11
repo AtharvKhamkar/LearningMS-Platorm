@@ -20,3 +20,7 @@ export interface CategoryDetails {
 export type FnCreateCategoryResult = ISqlFnResult<{
     categoryId: string
 }>;
+
+export type FnUpdateCategoryResult = ISqlFnResult<{
+    categoryId: string
+}>;

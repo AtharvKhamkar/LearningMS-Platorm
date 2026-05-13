@@ -24,3 +24,8 @@ export type FnCreateCategoryResult = ISqlFnResult<{
 export type FnUpdateCategoryResult = ISqlFnResult<{
     categoryId: string
 }>;
+
+export type FnEnableDisableCategoryResult = ISqlFnResult<{
+    categoryId: string;
+    isDisabled: boolean
+}>;

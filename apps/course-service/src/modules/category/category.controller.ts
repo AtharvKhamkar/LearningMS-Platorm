@@ -8,6 +8,7 @@ import { CreateCategoryDto } from './dtos/create-category.dto';
 import { CreateCategoryResponseEntity } from './entities/create-category-response.entity';
 import { UpdateCategoryDto } from './dtos/update-category.dto';
 import { UpdateCategoryResponseDto } from './entities/update-category-response-entity';
+import { EnableDisableCategoryResponseDto } from './entities/enable-disable-category-response.entity';
 
 @Controller('/category')
 @ApiBearerAuth('access-token')
@@ -48,5 +49,16 @@ export class CategoryController {
   ) {
     const userId = user.sub;
     return this.categoryService.updateCategory(userId, categoryId, dto);
+  }
+
+  @CheckPermissions(Permissions.CATEGORY_UPDATE)
+  @Put('/enable-disable/:id')
+  @ApiOkResponse({ type: EnableDisableCategoryResponseDto })
+  async enableDisableCategory(
+    @CurrentUser() user: JwtPayload,
+    @Param('id') categoryId: string,
+  ) {
+    const userId = user.sub;
+    return this.categoryService.enableDisableCategory(userId, categoryId);
   }
 }

@@ -1,11 +1,12 @@
 import { ApiResponse, DatabaseService, IPgQuery, ResponseUtil, StorageService } from '@app/common';
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CategoryDetails, FnCreateCategoryResult, FnGetCategoriesResult, FnUpdateCategoryResult } from './types/category.types';
+import { CategoryDetails, FnCreateCategoryResult, FnEnableDisableCategoryResult, FnGetCategoriesResult, FnUpdateCategoryResult } from './types/category.types';
 import { GetCategoryResponseEntity } from './entities/get-categories-response.entity';
 import { CreateCategoryDto } from './dtos/create-category.dto';
 import { CreateCategoryResponseEntity } from './entities/create-category-response.entity';
 import { UpdateCategoryDto } from './dtos/update-category.dto';
 import { UpdateCategoryResponseDto } from './entities/update-category-response-entity';
+import { EnableDisableCategoryResponseDto } from './entities/enable-disable-category-response.entity';
 
 @Injectable()
 export class CategoryService {
@@ -73,7 +74,7 @@ export class CategoryService {
         )
     }
 
-    async updateCategory(userId: string, categoryId: string,dto: UpdateCategoryDto): Promise<ApiResponse> {
+    async updateCategory(userId: string, categoryId: string, dto: UpdateCategoryDto): Promise<ApiResponse> {
 
         const pgQuery: IPgQuery = {
             query: `SELECT * FROM fn_update_category($1, $2, $3, $4)`,
@@ -101,9 +102,34 @@ export class CategoryService {
             })
 
         )
-
     }
 
+    async enableDisableCategory(userId: string, categoryId: string): Promise<ApiResponse> {
+
+        const pgQuery: IPgQuery = {
+            query: `SELECT * FROM fn_enable_disable_category($1, $2)`,
+            params: [
+                userId,
+                categoryId
+            ]
+        }
+
+        const queryResult = await this.databaseService.queryOne<FnEnableDisableCategoryResult>(pgQuery);
+
+        if (!queryResult?.success) {
+            throw new BadRequestException(
+                queryResult?.message || "Failed to enable or disable categories"
+            );
+        }
 
 
+        return ResponseUtil.success(
+            queryResult.message,
+            new EnableDisableCategoryResponseDto({
+                categoryId: queryResult?.data?.categoryId,
+                isDisabled: queryResult?.data?.isDisabled
+            })
+
+        )
+    }
 }

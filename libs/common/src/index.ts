@@ -23,6 +23,7 @@ export * from './infrastructure/storage/storage.service'
 export * from './validators/file-type.validator';
 export * from './validators/file-size.validator';
 export * from './pipes/image-upload.pipe';
+export * from './pipes/video-upload.pipe';
 export * from './rbac/permissions';
 export * from './rbac/role-permissions';
 export * from './rbac/roles';

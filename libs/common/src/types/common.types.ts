@@ -66,4 +66,18 @@ export const AllowedImageExtensions = [
     '.jpg'
 ]
 
+export const AllowedVideoMimeTypes = [
+  'video/mp4',
+  'video/quicktime',
+  'video/x-matroska',
+  'video/webm',
+];
+
+export const AllowedVideoExtensions = [
+  '.mp4',
+  '.mov',
+  '.mkv',
+  '.webm',
+];
+
 export interface FnGetUserProfileDetails<IUserDb> extends ApiResponse<IUserDb>{}

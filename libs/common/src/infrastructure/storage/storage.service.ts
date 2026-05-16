@@ -77,12 +77,11 @@ export class StorageService {
 
     /*
     Function used to get presinged url to upload object on the storage service */
-    async getUploadPresignedUrl(fileName: string, contentType: string): Promise<{ url: string, key: string }> {
+    async getUploadPresignedUrl(key: string, contentType: string, bucketName: string): Promise<{ url: string, key: string }> {
 
-        const key = `${extname(fileName)}_${uuid()}`;
 
         const command = new PutObjectCommand({
-            Bucket: this.bucket,
+            Bucket: bucketName ?? this.bucket,
             Key: key
         });
 

@@ -1,9 +1,10 @@
 import { Controller, Param, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes } from '@nestjs/swagger';
 import { CheckPermissions, CurrentUser, JwtAuthGuard, Permissions, PermissionsGuard, VideoUploadPipe } from '@app/common';
 import type { JwtPayload } from '@app/common';
 import { LectureService } from './lecture.service';
 import { FileInterceptor } from '@nestjs/platform-express/multer';
+import { UploadVideoLectureDto } from './dtos/upload-lecture-video.dto';
 
 @Controller('/lecture')
 @ApiBearerAuth('access-token')
@@ -13,7 +14,9 @@ export class LectureController {
 
     @CheckPermissions(Permissions.COURSE_CREATE)
     @Post('/:lectureId/get-presign-url')
-    @UseInterceptors(FileInterceptor('file'))
+    @ApiConsumes('multipart/form-data')
+    @ApiBody({ type: UploadVideoLectureDto })
+    @UseInterceptors(FileInterceptor('video'))
     async getLecturePresignUrl(
         @CurrentUser() user: JwtPayload,
         @Param('lectureId') lectureId: string,

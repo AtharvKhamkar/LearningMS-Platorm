@@ -55,6 +55,15 @@
         "tsConfigPath": "apps/mail-worker/tsconfig.app.json"
       }
     },
+    "transcoding-service": {
+      "type": "application",
+      "root": "apps/transcoding-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/transcoding-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/transcoding-service/tsconfig.app.json"
+      }
+    },
     "user-management-service": {
       "type": "application",
       "root": "apps/user-management-service",

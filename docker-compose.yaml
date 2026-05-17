@@ -41,6 +41,20 @@ services:
   #   ports:
   #     - '3002:3002'
 
+  transcoding-service:
+    build:
+      context: .
+      dockerfile: ./apps/transcoding-service/dockerfile
+      target: development
+    command: npm run start:dev transcoding-service
+    env_file:
+      - ./apps/transcoding-service/.env
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '3004:3004'
+
   # user-management-service:
   #   build:
   #     context: .
@@ -53,7 +67,7 @@ services:
   #     - .:/usr/src/app
   #     - /usr/src/app/node_modules
   #   ports:
-  #     - '3003:3003'
+  #     - '3005:3005'
 
   mail-worker:
     build:

@@ -12,6 +12,7 @@ export class StorageService {
     constructor(private readonly configService: ConfigService) {
         this.storageClient = new S3Client({
             region: configService.get<string>('AWS_REGION'),
+            requestChecksumCalculation: 'WHEN_REQUIRED',
             credentials: {
                 accessKeyId: configService.get<string>('AWS_ACCESS_KEY_ID') ?? '',
                 secretAccessKey: configService.get<string>('AWS_SECRET_ACCESS_KEY') ?? ''
@@ -82,6 +83,7 @@ export class StorageService {
 
         const command = new PutObjectCommand({
             Bucket: bucketName ?? this.bucket,
+            ContentType: contentType,
             Key: key
         });
 

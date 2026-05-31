@@ -1,14 +1,19 @@
-import { Bucket, DeleteObjectCommand, GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { Bucket, DeleteObjectCommand, GetObjectCommand, HeadObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { extname, parse } from 'path';
+import path, { extname, parse } from 'path';
+import { pipeline, Readable } from "stream";
 import { v4 as uuid } from 'uuid';
+import * as fs from 'fs';
 
 @Injectable()
 export class StorageService {
+    private readonly logger: Logger = new Logger(StorageService.name);
     private storageClient: S3Client;
     private bucket: string;
+    private rawBucket: string;
+    private readonly processedBucket: string;
     constructor(private readonly configService: ConfigService) {
         this.storageClient = new S3Client({
             region: configService.get<string>('AWS_REGION'),
@@ -20,6 +25,8 @@ export class StorageService {
         });
 
         this.bucket = configService.get<string>('AWS_S3_BUCKET_NAME') ?? '';
+        this.rawBucket = configService.get<string>('AWS_S3_RAW_BUCKET_NAME') ?? '';
+        this.processedBucket = configService.get<string>('AWS_S3_PROCESSED_BUCKET_NAME') ?? '';
 
     }
 
@@ -91,5 +98,4 @@ export class StorageService {
 
         return { url, key };
     }
-
 }
